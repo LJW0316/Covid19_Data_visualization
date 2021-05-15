@@ -1,0 +1,2 @@
+# Covid19_Data_visualization
+基于python的疫情可视化系统
