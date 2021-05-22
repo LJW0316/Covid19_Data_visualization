@@ -1,24 +1,38 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-import matplotlib.animation as animation
-from IPython.display import HTML
 import time
 
 
-def pdFrameListToList(frame):
-    """
-    将pdFrame转换的嵌套列表展开
-    :param frame:pdFrame转换的嵌套列表
-    :return:展开后的列表
-    """
-    res = [x for k in frame for x in k]
-    return res
+def drawAnimation(xData, yData, header):
+    params = {'figure.figsize': '6.8, 4.8'}
+    plt.rcParams.update(params)
+    plt.ion()
+    plt.figure(1)
+    t_list = []
+    result_list = []
+    plt.ticklabel_format(style='plain', useOffset=False)
+    for i in range(len(yData)):
+        t_list.append(xData[i])
+        result_list.append(yData[i])
+        if i > 5:
+            del t_list[0]
+            del result_list[0]
+        plt.plot(t_list, result_list, c='r', ls='-', marker='o', mec='b', mfc='w')
+        plt.title(header)
+        plt.ylabel('确诊人数')
+        plt.xlabel('时间')
+        plt.pause(0.5)
 
 
-def showAllTimeWorld():
-    pass
+def showAlltimeWorld(countryName):
+    # 获取数据
+    fileName = "data/alltime_world" + '_' + time.strftime('%Y_%m%d', time.localtime(time.time())) + '.csv'
+    worldAlltimeData = pd.read_csv(fileName)
+    historyData = worldAlltimeData.loc[worldAlltimeData['name'] == countryName]  # 得到指定国家历史数据
+    confirmData = historyData['total_confirm'].values.tolist()
+    dateData = historyData['date'].values.tolist()
+    drawAnimation(dateData, confirmData, countryName + '历史数据')
 
 
 def drawTable(Name, totalConfirm, totalDeath, header, xLabel):
@@ -65,12 +79,9 @@ def showTodayChina():
     # 获取数据
     fileName = "data/todayChina" + '_' + time.strftime('%Y_%m%d', time.localtime(time.time())) + '.csv'
     todayChinaData = pd.read_csv(fileName)
-    provinceName = todayChinaData[['name']].values.tolist()
-    provinceName = pdFrameListToList(provinceName)
-    totalConfirm = todayChinaData[['total_confirm']].values.tolist()
-    totalConfirm = pdFrameListToList(totalConfirm)
-    totalDeath = todayChinaData[['total_dead']].values.tolist()
-    totalDeath = pdFrameListToList(totalDeath)
+    provinceName = todayChinaData['name'].values.tolist()
+    totalConfirm = todayChinaData['total_confirm'].values.tolist()
+    totalDeath = todayChinaData['total_dead'].values.tolist()
     # 画图
     drawTable(provinceName, totalConfirm, totalDeath, '中国各省市累计确诊情况\n', '省份')
 
@@ -84,12 +95,9 @@ def showTodayWorld():
     fileName = "data/todayWorld" + '_' + time.strftime('%Y_%m%d', time.localtime(time.time())) + '.csv'
     todayWorldData = pd.read_csv(fileName)
     todayWorldDataSorted = todayWorldData.sort_values(by='total_confirm', ascending=False).head(30)
-    countryName = todayWorldDataSorted[['name']].values.tolist()
-    countryName = pdFrameListToList(countryName)
-    totalConfirm = todayWorldDataSorted[['total_confirm']].values.tolist()
-    totalConfirm = pdFrameListToList(totalConfirm)
-    totalDeath = todayWorldDataSorted[['total_dead']].values.tolist()
-    totalDeath = pdFrameListToList(totalDeath)
+    countryName = todayWorldDataSorted['name'].values.tolist()
+    totalConfirm = todayWorldDataSorted['total_confirm'].values.tolist()
+    totalDeath = todayWorldDataSorted['total_dead'].values.tolist()
     # 画图
     drawTable(countryName, totalConfirm, totalDeath, '世界累计确诊前30国家情况\n', '国家')
 
@@ -97,6 +105,7 @@ def showTodayWorld():
 def main():
     showTodayChina()
     showTodayWorld()
+    showAlltimeWorld('美国')
 
 
 if __name__ == '__main__':
