@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
+import getData
 
 
 def drawAnimation(xData, yData, header):
@@ -100,13 +101,3 @@ def showTodayWorld():
     totalDeath = todayWorldDataSorted['total_dead'].values.tolist()
     # 画图
     drawTable(countryName, totalConfirm, totalDeath, '世界累计确诊前30国家情况\n', '国家')
-
-
-def main():
-    showTodayChina()
-    showTodayWorld()
-    showAlltimeWorld('美国')
-
-
-if __name__ == '__main__':
-    main()

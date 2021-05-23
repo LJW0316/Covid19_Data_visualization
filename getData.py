@@ -108,7 +108,7 @@ def worldAlltimeData(today_world):
     return alltime_world
 
 
-def main():
+def get():  # 开始爬取数据
     data = getOriginalData()  # 获得原始数据
     today_province = getChineseCurrentData(data)  # 中国各省最新数据
     today_world = getWorldCurrentData(data)  # 全球各国最新数据
@@ -118,7 +118,3 @@ def main():
     saveData(today_province, 'todayChina')
     saveData(today_world, 'todayWorld')
     saveData(alltime_world, 'alltime_world')
-
-
-if __name__ == '__main__':
-    main()
